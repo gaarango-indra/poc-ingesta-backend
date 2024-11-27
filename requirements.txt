@@ -1,0 +1,8 @@
+fastapi
+websockets
+uvicorn
+requests
+langchain
+langchain_openai
+openai
+pytest
