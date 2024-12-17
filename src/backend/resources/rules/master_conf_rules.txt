@@ -1,0 +1,198 @@
+Instructions
+
+RULE 1: Conditional Replacement Rule in the Template:
+
+Rule 1.1: Only replace text within {example} placeholders if it meets the following conditions:
+
+Rule 1.1.1: No question mark ? inside the braces: If the text within braces contains ?, as in {?example}, do not replace it.
+Rule 1.1.1: No $ symbol before the braces: If the text within braces has a $ symbol before it, as in ${example}, do not replace it.
+
+Examples:
+
+Allow replacement: {example}, /{example}
+Do not replace: {?example}, ${example}
+
+RULE 2: Master Ingest Transformation Mapping
+
+2.1: Adding Year, Month, and Day for Partition "cutoff_date"
+
+Generate filters dynamically based on the "partition" input.
+
+Input:
+    partition = "<dynamic_partition_value>"
+
+Transformation:
+    - If partition == "cutoff_date":
+        Generate the following output:
+        {
+            type = "sqlFilter"
+            filter = "cutoff_date='"${?YEAR}"-"${?MONTH}"-"${?DAY}"'"
+        }
+
+        Output Example for "cutoff_date":
+        {
+            type = "sqlFilter"
+            filter = "cutoff_date='"${?YEAR}"-"${?MONTH}"-"${?DAY}"'"
+        }
+
+    - If partition == ["partition_data_year_id", "partition_data_month_id", "partition_data_day_id"]:
+        {
+            type = "sqlFilter"
+            filter = "partition_data_year_id='"${?YEAR}"' AND partition_data_month_id='"${?MONTH}"' AND "partition_data_day_id='"${?DAY}"'"
+        }
+
+2.2: Generate Default setCurrentDate Transformation
+
+Generate default output to set the current date.
+
+Output Example:
+    {
+        type = "setCurrentDate"
+        field = "audit_date"
+    }
+
+2.3: Given a dictionary called grouped_fields, where each key represents a data type (e.g., "decimal(20,9)", "int32", etc.) and the value is a list of fields that belong to that data type, transform the grouped parameters into the following structure for each data type except "string":
+
+{
+    field="<all_fields_with_this_type_separated_by_pipe(|)>",
+    regex=true,
+    type=formatter,
+    typeToCast="<data_type_key>",
+}
+
+Input Example:
+
+grouped_fields = {
+    "decimal(20,9)": ["final_interest_per", "fs_bf_tae_int_mrgn_new_amount"],
+    "int32": ["contract_duration_number"],
+}
+
+Expected Output:
+
+[
+    {
+        field="final_interest_per|fs_bf_tae_int_mrgn_new_amount",
+        regex=true,
+        type=formatter,
+        typeToCast="decimal(20,9)",
+    },
+    {
+        field="contract_duration_number",
+        regex=true,
+        type=formatter,
+        typeToCast=int32,
+    }
+]
+
+Please process the input dictionary accordingly and return the transformed structure as a list of dictionaries, following the specified format. Ensure the output is valid and respects the given example structure.
+
+2.4: Given a dictionary called grouped_fields, where each key represents a data type (e.g., "string", "int32") and the value is a list of fields of that type, transform the grouped parameters into a "trim" operation configuration. Specifically, apply the following structure for each group of fields, excluding the field "audit_date" or date data types:
+
+{
+    field="<all_fields_with_this_type_separated_by_pipe(|) except audit_date>",
+    regex=true,
+    type="trim",
+    trimType="both",
+}
+
+2.5: Apply this rule to data fields of type date. Given a dictionary 'date_format_dict' with:
+
+{
+    "input_date_format": "<input_format>",
+    "output_date_format": "<output_format>"
+}
+
+A dictionary named 'grouped_fields' where if the key is "date", we need to extract its value as field.
+
+{
+    field="<all_fields_with_this_type_separated_by_pipe(|)>"
+    regex=true
+    type = "dateformatter"
+    format = "{input_date_format}"
+    reformat = "{output_date_format}"
+    operation = reformat
+}
+
+Replace {input_date_format} with the value of date_format_dict["input_date_format"].
+Replace {output_date_format} with the value of date_format_dict["output_date_format"].
+Replace <all_fields_with_this_type_separated_by_pipe(|)> with the value of the field key from the data dictionary.
+
+Example Input:
+
+date_format_dict = {
+    "input_date_format": "dd/MM/yyyy",
+    "output_date_format": "yyyy-MM-dd"
+}
+data = {
+    "date": "transaction_date",
+    "amount": "total_amount"
+}
+
+Expected Output:
+
+{
+    field="transaction_date"
+    regex=true
+    type="dateformatter"
+    format="dd/MM/yyyy"
+    reformat="yyyy-MM-dd"
+    operation=reformat
+}
+
+
+If the "date" key does not exist in data, return an empty string.
+Ensure the output is properly formatted as described above.
+
+2.6: Decimal Field Transformer with Dot Replacement
+
+you will process a given dictionary named `parameters`. Follow these rules strictly:
+
+* Check if the dictionary contains a key named `found_dot` and verify its value is `True`.
+* If `found_dot` is `True`, focus on another dictionary named `grouped_fields`.
+* Identify all keys in `grouped_fields` that start with the string `decimal` (e.g., `decimal(3)`, `decimal(17,6)`).
+* For each of these keys, apply the following transformation to their values:
+   - Construct a formatted string using the structure:
+     ```
+     field="<all_fields_with_this_type_separated_by_pipe(|)>
+            regex=true
+            replacements=[
+                {
+                    pattern = "[.]"
+                    replacement = ""
+                }
+            ]
+            type=formatter
+            typeToCast=string
+     ```
+   - Replace `<all_fields_with_this_type_separated_by_pipe(|)>` with a pipe-separated list of field names corresponding to the current key in `grouped_fields`.
+
+2.6: Decimal Field Transformer with Comma Replacement
+
+you will process a given dictionary named `parameters`. Follow these rules strictly:
+
+* Check if the dictionary contains a key named `found_comma` and verify its value is `True`.
+* If `found_comma` is `True`, focus on another dictionary named `grouped_fields`.
+* Identify all keys in `grouped_fields` that start with the string `decimal` (e.g., `decimal(3)`, `decimal(17,6)`).
+* For each of these keys, apply the following transformation to their values:
+   - Construct a formatted string using the structure:
+     ```
+     field="<all_fields_with_this_type_separated_by_pipe(|)>
+            regex=true
+            replacements=[
+                {
+                    pattern = "[,]"
+                    replacement = "."
+                }
+            ]
+            type=formatter
+            typeToCast=string
+     ```
+   - Replace `<all_fields_with_this_type_separated_by_pipe(|)>` with a pipe-separated list of field names corresponding to the current key in `grouped_fields`.
+
+RULE 3: Strict Template Completion Rule
+
+When responding, strictly adhere to the provided template structure. Replacements must be performed for parameters that meet the criteria outlined in Rule 1, while leaving non-replaceable parameters intact as specified. Ensure the response maintains the format and structure of the template but allows dynamic replacements where applicable.
+
+Notes for the Agent:
+Ensure the HOCON structures and replacements are applied exactly as described in these rules.
+If you encounter a partition value not mentioned above, check before proceeding.

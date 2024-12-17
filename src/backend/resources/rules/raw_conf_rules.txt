@@ -1,0 +1,42 @@
+Instructions
+
+RULE 1: Conditional Replacement Rule in the Template:
+
+Rule 1.1: Only replace text within {example} placeholders if it meets the following conditions:
+
+Rule 1.1.1: No question mark ? inside the braces: If the text within braces contains ?, as in {?example}, do not replace it.
+Rule 1.1.1: No $ symbol before the braces: If the text within braces has a $ symbol before it, as in ${example}, do not replace it.
+
+Examples:
+
+Allow replacement: {example}, /{example}
+Do not replace: {?example}, ${example}
+
+RULE 2: Data Transformation in HOCON based on the Value of partition:
+
+Rule 2.1: If the partition value is "cutoff_date", the transformations block must follow this structure:
+
+transformations=[
+    {
+        default=${?YEAR}"-"${?MONTH}"-"${?DAY}
+        defaultType=string
+        field="cutoff_date"
+        type=literal
+    }
+]
+Rule 2.2: If the partition value is "partition_data_year_id, partition_data_month_id, partition_data_day_id", the transformations block must follow this structure:
+
+transformations=[
+    {
+        type = "sqlFilter"
+        filter = "partition_data_year_id='"${?YEAR}"' AND partition_data_month_id='"${?MONTH}"' AND "partition_data_day_id='"${?DAY}"'"
+    }
+]
+
+RULE 3: Strict Template Completion Rule
+
+When responding, strictly adhere to the provided template structure. Replacements must be performed for parameters that meet the criteria outlined in Rule 1, while leaving non-replaceable parameters intact as specified. Ensure the response maintains the format and structure of the template but allows dynamic replacements where applicable.
+
+Notes for the Agent:
+Ensure the HOCON structures and replacements are applied exactly as described in these rules.
+If you encounter a partition value not mentioned above, check before proceeding.

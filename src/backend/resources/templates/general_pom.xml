@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.datio.skynet</groupId>
+        <artifactId>skynet-parent</artifactId>
+        <version>T-1700.0</version>
+    </parent>
+
+    <groupId>com.datio.datacsanrorc20ingestvis</groupId>
+    <artifactId>datacsanrorc20ingestvis</artifactId>
+    <packaging>pom</packaging>
+    <version>0.1.0-SNAPSHOT</version>
+
+    <name>Parent datacsanrorc20ingestvis</name>
+
+    <properties>
+        <skynet-cli.version>T-1700.0</skynet-cli.version>
+        <skynet-maven-plugin.version>T-1700.0</skynet-maven-plugin.version>
+		<skynet.country>co</skynet.country>
+</properties>
+
+<modules>  <module>{uuaa}</module>
+  </modules>
+</project>

@@ -1,0 +1,5 @@
+frontend/
+UI/
+venv/
+__pycache__/
+.env

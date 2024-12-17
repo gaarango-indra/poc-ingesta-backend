@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>{parent_gp_groupId}</groupId>
+        <artifactId>{gp_artifactId}</artifactId>
+        <version>{gp_version}</version>
+    </parent>
+
+    <artifactId>{uuaa}</artifactId>
+    <packaging>jar</packaging>
+    <name>{uuaa} module</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.datio.skynet</groupId>
+            <artifactId>skynet-cli</artifactId>
+            <version>${skynet-cli.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_${scala.binary.version}</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql_${scala.binary.version}</artifactId>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.datio.skynet</groupId>
+                <artifactId>skynet-maven-plugin</artifactId>
+                <version>${skynet-maven-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.spark</groupId>
+                        <artifactId>spark-core_${scala.binary.version}</artifactId>
+                        <version>${spark.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

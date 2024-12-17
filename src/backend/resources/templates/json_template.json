@@ -1,0 +1,11 @@
+{
+    "_id": "{job_id}",
+    "description": "Job {job_id} created with App.",
+    "kind": "processing",
+    "params": {
+        "configUrl": "${repository.endpoint.vdc}/${repository.repo.schemas}/kirby/{code_schema}/{uuaa}/{database}/{name}/${version}/{name}.rep.conf"
+    },
+    "runtime": "kirby3-lts",
+    "size": "{size_value}",
+    "streaming": false
+}
