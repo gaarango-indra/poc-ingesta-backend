@@ -63,11 +63,7 @@ class FileAnalyzer:
             bool: True if the file likely has a header, False otherwise.
         """
         # Define the pattern to detect header keywords
-<<<<<<< HEAD
         header_keywords = re.compile(r'(id|date|year|año)', re.IGNORECASE)
-=======
-        header_keywords = re.compile(r'(id|date|year)', re.IGNORECASE)
->>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
         # Define a pattern to detect date-like values
         date_pattern = re.compile(r'^(\d{4}-\d{2}-\d{2}|\d{2}/\d{2}/\d{4}|\d{4}/\d{2}/\d{2})$')
 
