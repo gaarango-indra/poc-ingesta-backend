@@ -5,7 +5,10 @@ requests
 langchain
 langchain_openai
 openai
+<<<<<<< HEAD
 httpx
 pandas
 python-dotenv
+=======
+>>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
 pytest

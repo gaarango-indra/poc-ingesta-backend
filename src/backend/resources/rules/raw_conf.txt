@@ -1,0 +1,182 @@
+Instructions
+
+RULE 1: Conditional Replacement Rule in the Template:
+
+Rule 1.1: Only replace text within {example} placeholders if it meets the following conditions:
+
+Rule 1.1.1: No question mark ? inside the braces: If the text within braces contains ?, as in {?example}, do not replace it.
+Rule 1.1.1: No $ symbol before the braces: If the text within braces has a $ symbol before it, as in ${example}, do not replace it.
+
+Examples:
+
+Allow replacement: {example}, /{example}
+Do not replace: {?example}, ${example}
+
+RULE 2: Data Transformation in HOCON based on the Value of partition:
+
+Rule 2.1: If the partition value is "cutoff_date", the transformations block must follow this structure:
+
+transformations=[
+    {
+        default=${?YEAR}"-"${?MONTH}"-"${?DAY}
+        defaultType=string
+        field="cutoff_date"
+        type=literal
+    }
+]
+Rule 2.2: If the partition value is "partition_data_year_id, partition_data_month_id, partition_data_day_id", the transformations block must follow this structure:
+
+transformations=[
+    {
+        default=${?YEAR}
+        defaultType=string
+        field="partition_data_year_id"
+        type=literal
+    },
+    {
+        default=${?MONTH}
+        defaultType=string
+        field="partition_data_month_id"
+        type=literal
+    },
+    {
+        default=${?DAY}
+        defaultType=string
+        field="partition_data_day_id"
+        type=literal
+    }
+]
+
+RULE 3: Master Ingest Transformation Mapping
+
+3.1: Adding Year, Month, and Day for Partition "cutoff_date"
+
+Generate filters dynamically based on the "partition" input.
+
+Input:
+    partition = "<dynamic_partition_value>"
+
+Transformation:
+    - If partition == "cutoff_date":
+        Generate the following output:
+        {
+            type = "sqlFilter"
+            filter = "cutoff_date='"${?YEAR}"-"${?MONTH}"-"${?DAY}"'"
+        }
+
+Output Example for "cutoff_date":
+{
+    type = "sqlFilter"
+    filter = "cutoff_date='"${?YEAR}"-"${?MONTH}"-"${?DAY}"'"
+}
+
+3.2: Generate Default setCurrentDate Transformation
+
+Generate default output to set the current date.
+
+Output Example:
+    {
+        type = "setCurrentDate"
+        field = "audit_date"
+    }
+
+3.3: Given a dictionary called grouped_fields, where each key represents a data type (e.g., "decimal(20,9)", "int32", etc.) and the value is a list of fields that belong to that data type, transform the grouped parameters into the following structure for each data type except "string":
+
+{
+    field="<all_fields_with_this_type_separated_by_pipe(|)>",
+    regex=true,
+    replacements=[],
+    type=formatter,
+    typeToCast="<data_type_key>",
+}
+
+Input Example:
+
+grouped_fields = {
+    "decimal(20,9)": ["final_interest_per", "fs_bf_tae_int_mrgn_new_amount"],
+    "int32": ["contract_duration_number"],
+}
+
+Expected Output:
+
+[
+    {
+        field="final_interest_per|fs_bf_tae_int_mrgn_new_amount",
+        regex=true,
+        replacements=[],
+        type=formatter,
+        typeToCast="decimal(20,9)",
+    },
+    {
+        field="contract_duration_number",
+        regex=true,
+        replacements=[],
+        type=formatter,
+        typeToCast=int32,
+    }
+]
+
+Please process the input dictionary accordingly and return the transformed structure as a list of dictionaries, following the specified format. Ensure the output is valid and respects the given example structure.
+
+3.4: Given a dictionary called Grouped Parameters, where each key represents a data type (e.g., "string", "int32") and the value is a list of fields of that type, transform the grouped parameters into a "trim" operation configuration. Specifically, apply the following structure for each group of fields, excluding the field "audit_date":
+
+{
+    field="<all_fields_with_this_type_separated_by_pipe(|) except audit_date>",
+    regex=true,
+    type="trim",
+    trimType="both",
+}
+
+3.5: Decimal Field Transformer with Dot Replacement
+
+you will process a given dictionary named `parameters`. Follow these rules strictly:
+
+* Check if the dictionary contains a key named `found_dot` and verify its value is `True`.
+* If `found_dot` is `True`, focus on another dictionary named `grouped_fields`.
+* Identify all keys in `grouped_fields` that start with the string `decimal` (e.g., `decimal(3)`, `decimal(17,6)`).
+* For each of these keys, apply the following transformation to their values:
+   - Construct a formatted string using the structure:
+     ```
+     field="<all_fields_with_this_type_separated_by_pipe(|)>
+            regex=true
+            replacements=[
+                {
+                    pattern = "[.]"
+                    replacement = ""
+                }
+            ]
+            type=formatter
+            typeToCast=string
+     ```
+   - Replace `<all_fields_with_this_type_separated_by_pipe(|)>` with a pipe-separated list of field names corresponding to the current key in `grouped_fields`.
+
+3.6: Decimal Field Transformer with Comma Replacement
+
+you will process a given dictionary named `parameters`. Follow these rules strictly:
+
+* Check if the dictionary contains a key named `found_comma` and verify its value is `True`.
+* If `found_comma` is `True`, focus on another dictionary named `grouped_fields`.
+* Identify all keys in `grouped_fields` that start with the string `decimal` (e.g., `decimal(3)`, `decimal(17,6)`).
+* For each of these keys, apply the following transformation to their values:
+   - Construct a formatted string using the structure:
+     ```
+     field="<all_fields_with_this_type_separated_by_pipe(|)>
+            regex=true
+            replacements=[
+                {
+                    pattern = "[,]"
+                    replacement = "."
+                }
+            ]
+            type=formatter
+            typeToCast=string
+     ```
+   - Replace `<all_fields_with_this_type_separated_by_pipe(|)>` with a pipe-separated list of field names corresponding to the current key in `grouped_fields`.
+
+RULE 4: Strict Template Completion Rule
+
+When responding, strictly adhere to the provided template structure. Replacements must be performed for parameters that meet the criteria outlined in Rule 1, while leaving non-replaceable parameters intact as specified. Ensure the response maintains the format and structure of the template but allows dynamic replacements where applicable.
+
+Notes for the Agent:
+Ensure the HOCON structures and replacements are applied exactly as described in these rules.
+If you encounter a partition value not mentioned above, check before proceeding.

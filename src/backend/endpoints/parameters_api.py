@@ -1,6 +1,11 @@
 from fastapi import FastAPI, HTTPException
+<<<<<<< HEAD
 from pydantic import BaseModel, RootModel
 from typing import Optional, Any, Dict
+=======
+from pydantic import BaseModel
+from typing import Optional
+>>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
 
 app = FastAPI()
 all_parameters_received = 0
@@ -83,6 +88,7 @@ async def get_status():
     if all_parameters_received:
         return {"status": "ready"}
     else:
+<<<<<<< HEAD
         return {"status": "waiting"}
     
 class FrontParams(RootModel[dict]):
@@ -129,3 +135,6 @@ def get_params():
         return returned_params
     else:
         return {"message": "Awaiting"}
+=======
+        return {"status": "waiting"}
+>>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6

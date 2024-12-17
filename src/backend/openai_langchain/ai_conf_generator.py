@@ -14,7 +14,11 @@ class AIConfGenerator:
             temperature=0
     )
 
+<<<<<<< HEAD
     def fill_template(self, ingest_type: str, template: str, parameters: dict, rules: str, example_filling: str, grouped_fields=None, date_format_dict=None) -> str:
+=======
+    def fill_template(self, ingest_type: str, template: str, parameters: dict, rules: str, example_filling: str, grouped_fields=None) -> str:
+>>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
         print(f"Ai conf generator, Ingest Type: {ingest_type}")
         """
         Fills the provided HOCON template based on input data, structured rules, and an example of the desired output format.
@@ -28,7 +32,11 @@ class AIConfGenerator:
         Returns:
         - str: A HOCON-formatted string with the filled template.
         """
+<<<<<<< HEAD
         if ingest_type == "raw":
+=======
+        if ingest_type == "Ingesta RAW":
+>>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
             
             # Crear el prompt con la estructura y el orden especificado
             prompt = f"""
@@ -51,7 +59,11 @@ class AIConfGenerator:
             Output the result as a string in HOCON format that retains the original structure.
             """
 
+<<<<<<< HEAD
         elif ingest_type=="master":
+=======
+        elif ingest_type=="Ingesta Master":
+>>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
        
             # Crear el prompt con la estructura y el orden especificado
             prompt = f"""
@@ -69,6 +81,7 @@ class AIConfGenerator:
 
             grouped_fields:
             {grouped_fields}
+<<<<<<< HEAD
 
             date_format_dict:
             {date_format_dict}
@@ -77,6 +90,13 @@ class AIConfGenerator:
             {example_filling}
             
             Please fill the template with the input data, applying the rules exactly as defined, and structure the result according to the example.
+=======
+            
+            Example of Desired Output Format:
+            {example_filling}
+            
+            Please fill the template with the input data, applying the rules exactly as defined, and format the result according to the example.
+>>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
             Output the result as a string in HOCON format that retains the original structure.
             """
         
