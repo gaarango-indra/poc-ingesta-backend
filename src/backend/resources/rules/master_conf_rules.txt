@@ -139,55 +139,65 @@ Expected Output:
     operation=reformat
 }
 
-
 If the "date" key does not exist in data, return an empty string.
 Ensure the output is properly formatted as described above.
 
-2.6: Decimal Field Transformer with Dot Replacement
+2.6: Analyze a dictionary named parameters to determine the required transformation rules based on the following table:
 
-you will process a given dictionary named `parameters`. Follow these rules strictly:
+| found_comma | found_dot | decimal_symbol | Transformation Logic |
+| True | True | , | Replace . with "" and , with . |
+| True | False | , | Replace , with . |
+| False | True | . | No transformation needed |
+| True | True | . | Replace , with "" |
 
-* Check if the dictionary contains a key named `found_dot` and verify its value is `True`.
-* If `found_dot` is `True`, focus on another dictionary named `grouped_fields`.
-* Identify all keys in `grouped_fields` that start with the string `decimal` (e.g., `decimal(3)`, `decimal(17,6)`).
-* For each of these keys, apply the following transformation to their values:
-   - Construct a formatted string using the structure:
-     ```
-     field="<all_fields_with_this_type_separated_by_pipe(|)>
-            regex=true
-            replacements=[
-                {
-                    pattern = "[.]"
-                    replacement = ""
-                }
-            ]
-            type=formatter
-            typeToCast=string
-     ```
-   - Replace `<all_fields_with_this_type_separated_by_pipe(|)>` with a pipe-separated list of field names corresponding to the current key in `grouped_fields`.
+Output Format:
+For each transformation, generate separate blocks using the following structure:
 
-2.6: Decimal Field Transformer with Comma Replacement
+field="<all_fields_with_this_type_separated_by_pipe(|)>"
+regex=true
+replacements=[
+    {
+        pattern = "[<symbol_to_replace>]"
+        replacement = "<new_value>"
+    }
+]
+type=formatter
+typeToCast=string
 
-you will process a given dictionary named `parameters`. Follow these rules strictly:
+Instructions:
+* Analyze the parameters dictionary to determine found_comma, found_dot, and decimal_symbol.
+* Apply the transformation rules from the table.
+* Output one block per replacement required, following the format above.
 
-* Check if the dictionary contains a key named `found_comma` and verify its value is `True`.
-* If `found_comma` is `True`, focus on another dictionary named `grouped_fields`.
-* Identify all keys in `grouped_fields` that start with the string `decimal` (e.g., `decimal(3)`, `decimal(17,6)`).
-* For each of these keys, apply the following transformation to their values:
-   - Construct a formatted string using the structure:
-     ```
-     field="<all_fields_with_this_type_separated_by_pipe(|)>
-            regex=true
-            replacements=[
-                {
-                    pattern = "[,]"
-                    replacement = "."
-                }
-            ]
-            type=formatter
-            typeToCast=string
-     ```
-   - Replace `<all_fields_with_this_type_separated_by_pipe(|)>` with a pipe-separated list of field names corresponding to the current key in `grouped_fields`.
+Example Input:
+parameters = {
+    "found_comma": True,
+    "found_dot": True,
+    "decimal_symbol": ","
+}
+
+Expected Output:
+field="<all_fields_with_this_type_separated_by_pipe(|)>"
+regex=true
+replacements=[
+    {
+        pattern = "[.]"
+        replacement = ""
+    }
+]
+type=formatter
+typeToCast=string
+
+field="<all_fields_with_this_type_separated_by_pipe(|)>"
+regex=true
+replacements=[
+    {
+        pattern = "[,]"
+        replacement = "."
+    }
+]
+type=formatter
+typeToCast=string
 
 RULE 3: Strict Template Completion Rule
 

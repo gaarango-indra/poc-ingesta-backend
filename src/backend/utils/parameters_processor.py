@@ -31,12 +31,9 @@ class ParameterProcessor:
         # Log sample file path for debugging
         #print(f"Sample Path: {self.parameters['data_sample_file_path']}")
 
-<<<<<<< HEAD
         
         self.schema = self._read_schema_file()
 
-=======
->>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
         # Process types
         process_type = self.parameters["process_type"]
         ingest_type = self.parameters["ingest_type"]
@@ -48,11 +45,7 @@ class ParameterProcessor:
 
     def _process_ingest_raw(self):
         """Processes 'Ingesta RAW' type files."""
-<<<<<<< HEAD
         #self.schema = self._read_schema_file()
-=======
-        self.schema = self._read_schema_file()
->>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
         if self.ingest_type == "Ingesta RAW":
             file_extension = self._get_file_extension()
             print(f"Sample Data Extension: {file_extension}")
@@ -142,13 +135,8 @@ class ParameterProcessor:
         #mapper = TypeToNameMapper(self.schema)
         #self.grouped_fields = mapper.map_types_to_names()
         # Display the result
-<<<<<<< HEAD
         #print("Type to Name Mapping:", self.grouped_fields)
         #print(f"Ingest type de _generate_configuration: {self.ingest_type}")
-=======
-        print("Type to Name Mapping:", self.grouped_fields)
-        print(f"Ingest type de _generate_configuration: {self.ingest_type}")
->>>>>>> 2e362e34245e2329e768318ea0d40dab0fb234c6
         processor = AIConfGenerator(api_key=self.api_key)
         try:
             if self.ingest_type == "Ingesta RAW":

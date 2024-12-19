@@ -13,6 +13,7 @@ from backend.utils.rep_json_writer import RepJsonWriter as rjw
 from backend.openai_langchain.ai_conf_generator import AIConfGenerator
 from backend.utils.conf_writer import ConfWriter as cw
 from backend.utils.decimal_field_checker_csv import DecimalFieldCheckerCSV as csvdecimalchecker
+from backend.utils.csv_decimal_validator import CSVDecimalValidator
 from backend.utils.csv_date_field_extractor import CsvDateFieldExtractor
 from backend.utils.data_formater_detector import DateFormatDetector
 from backend.utils.schema_date_field_extractor import SchemaDateFieldExtractor
@@ -172,10 +173,13 @@ class ParameterProcessor:
             
             else:
                 print("La llave 'date' no existe en el diccionario.")
-            csv_decimal_checker = csvdecimalchecker(csv_path, self.grouped_fields)
-            found_comma, found_dot = csv_decimal_checker.check_comma_and_dot()
+            #csv_decimal_checker = csvdecimalchecker(csv_path, self.grouped_fields)
+            #found_comma, found_dot = csv_decimal_checker.check_comma_and_dot()
+            csv_decimal_validator = CSVDecimalValidator(csv_path, self.grouped_fields)
+            found_comma, found_dot, decimal_symbol, correct_data = csv_decimal_validator.analyze_csv()
             self.parameters["found_comma"] = found_comma
             self.parameters["found_dot"] = found_dot
+            self.parameters["decimal_symbol"] = decimal_symbol
         
         print(f"parameters_processor schema: {self.schema}")
         self.parameters["uuaa"] = self.schema["namespace"].lower()
