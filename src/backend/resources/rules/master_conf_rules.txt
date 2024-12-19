@@ -51,7 +51,7 @@ Output Example:
         field = "audit_date"
     }
 
-2.3: Given a dictionary called grouped_fields, where each key represents a data type (e.g., "decimal(20,9)", "int32", etc.) and the value is a list of fields that belong to that data type, transform the grouped parameters into the following structure for each data type except "string":
+2.3: Given a dictionary called grouped_fields, where each key represents a data type (e.g., "decimal(20,9)", "int32", etc.) and the value is a list of fields that belong to that data type, transform the grouped parameters into the following structure for each data type except "string" data type:
 
 {
     field="<all_fields_with_this_type_separated_by_pipe(|)>",
