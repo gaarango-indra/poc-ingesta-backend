@@ -88,6 +88,7 @@ class ParameterProcessor:
         example_conf = fio.read_txt(example_conf_path)
         
         processor = AIConfGenerator(api_key=self.api_key)
+        
         try:
             if self.ingest_type == "raw":
                 filled_template = processor.fill_template(self.ingest_type, template_conf, self.parameters, rules_conf, example_conf)
@@ -95,7 +96,9 @@ class ParameterProcessor:
                 #cw.write_conf(config_content, folder_info['complete_path'], folder_info['name'])
                 print(f"Plantilla Diligenciada")
             elif self.ingest_type == "master":
-                filled_template = processor.fill_template(self.ingest_type, template_conf, self.parameters, rules_conf, example_conf, self.grouped_fields, self.date_format_dict)
+                print(f"date_format_dict")
+                print(self.date_format_dict)
+                filled_template = processor.fill_template(self.ingest_type, template_conf, self.parameters, rules_conf, example_conf, self.date_format_dict, self.grouped_fields)
                 #config_content = self._extract_config_from_template(str(filled_template))
                 #cw.write_conf(config_content, folder_info['complete_path'], folder_info['name'])
             print(f"Filled <template: \n{filled_template}")
@@ -143,6 +146,7 @@ class ParameterProcessor:
 
         if self.database == "raw":
             file_extension = self._get_file_extension()
+            self.parameters["input_format"] = file_extension
             print(f"Sample Data Extension: {file_extension}")
 
             if file_extension in ["csv", "txt"]:
@@ -168,11 +172,12 @@ class ParameterProcessor:
                 date_formats = schema_date_field_extractor.extract_date_formats()
                 schema_date_format = list(date_formats[0].values())[0]
                 #if sample_data_date_format != schema_date_format:
-                self.date_format_dict = {"input_date_format": sample_data_date_format, "output_date_format": schema_date_format}
-                print(f"Diccionario con Formatos de Fecha de I/O: {self.date_format_dict}")
-            
+                if "date" in self.grouped_fields:
+                    print("Hay date")
+                    self.date_format_dict = {"input_date_format": sample_data_date_format, "output_date_format": schema_date_format}            
             else:
                 print("La llave 'date' no existe en el diccionario.")
+                self.date_format_dict = {"input_date_format": "", "output_date_format": ""}
             #csv_decimal_checker = csvdecimalchecker(csv_path, self.grouped_fields)
             #found_comma, found_dot = csv_decimal_checker.check_comma_and_dot()
             csv_decimal_validator = CSVDecimalValidator(csv_path, self.grouped_fields)

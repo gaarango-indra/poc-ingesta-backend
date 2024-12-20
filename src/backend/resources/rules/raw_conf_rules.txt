@@ -28,8 +28,22 @@ Rule 2.2: If the partition value is "partition_data_year_id, partition_data_mont
 
 transformations=[
     {
-        type = "sqlFilter"
-        filter = "partition_data_year_id='"${?YEAR}"' AND partition_data_month_id='"${?MONTH}"' AND "partition_data_day_id='"${?DAY}"'"
+        default=${?YEAR}
+        defaultType=string
+        field="partition_data_year_id"
+        type=literal
+    },
+    {
+        default=${?MONTH}
+        defaultType=string
+        field="partition_data_month_id"
+        type=literal
+    },
+    {
+        default=${?DAY}
+        defaultType=string
+        field="partition_data_day_id"
+        type=literal
     }
 ]
 

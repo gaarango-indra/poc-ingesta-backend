@@ -14,7 +14,7 @@ class AIConfGenerator:
             temperature=0
     )
 
-    def fill_template(self, ingest_type: str, template: str, parameters: dict, rules: str, example_filling: str, grouped_fields=None, date_format_dict=None) -> str:
+    def fill_template(self, ingest_type: str, template: str, parameters: dict, rules: str, example_filling: str, date_format_dict, grouped_fields=None) -> str:
         print(f"Ai conf generator, Ingest Type: {ingest_type}")
         """
         Fills the provided HOCON template based on input data, structured rules, and an example of the desired output format.

@@ -86,9 +86,9 @@ class ModulePomGenerator:
         :return: Dictionary containing extracted data.
         """
         try:
-            parent = xml_root.find("ns0:parent", self.namespace)
-
-            group_id = parent.find("ns0:groupId", self.namespace).text if parent is not None else None
+            #parent = xml_root.find("ns0:parent", self.namespace)
+            #group_id = parent.find("ns0:groupId", self.namespace).text if parent is not None else None
+            group_id = xml_root.find("ns0:groupId", self.namespace).text
             artifact_id = xml_root.find("ns0:artifactId", self.namespace).text
             version = xml_root.find("ns0:version", self.namespace).text
 
@@ -150,6 +150,7 @@ class ModulePomGenerator:
         """
         try:
             xml_root = self.read_xml()
+            print(f"\nxml_root: {xml_root}\n")
             data = self.extract_data_from_xml(xml_root)
             template_content = self.load_template()
             self.generate_output_xml(template_content, data)
